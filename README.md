@@ -1,2 +1,3 @@
-# learnd3
-Learning d3.js for data visualisation
+# Learn d3.js
+
+Learning d3.js for data visualisation 

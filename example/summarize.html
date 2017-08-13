@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<style> body{margin: 10px;}</style>
+
+<h1> Summarize Data </h1>
+<p> Basic summary operations like min, max, extent, mean </p>
+<div id="detail"></div>
+
+<script>
+var div = d3.select("#detail");
+
+d3.csv("../data/airports.csv", function(error, data) {
+  if (error) console.log("error loading", error); 
+
+  // Converting string to numbers
+  data.forEach(function(d) {
+    d.id = +d.id;
+    d.latitude = +d.latitude;
+    d.longitude = +d.longitude;
+    d.altitude = +d.altitude;
+    d.timezone = +d.timezone;
+  });
+  
+  // Filter Indian Cities
+  var indianCities = data.filter(function(d) { return d.country == "India"; })
+  
+  var minAlt = d3.min(indianCities, function(d){ return d.altitude} ) 
+  var maxAlt = d3.max(indianCities, function(d){ return d.altitude} ) 
+  var extentAlt = d3.extent(indianCities, function(d){ return d.altitude} ) 
+  var meanAlt = d3.mean(indianCities, function(d){ return d.altitude} ) 
+  
+  div.append("p").text("Altitude of Indian Airports (feets)");
+  div.append("p").text("Minimum: " + minAlt);
+  div.append("p").text("Maximum: " + maxAlt);
+  div.append("p").text("Extent: " + extentAlt);
+  div.append("p").text("Mean: " + meanAlt);
+  
+});
+</script>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="description" content="{{ site.description }}">
+<meta name="author" content="{{ site.author }}">
+
+<title>Learn D3.js</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/lib/github.css">
+<script src="/lib/d3.v4.min.js"></script>
+<script src="/lib/highlight.pack.js"></script>
+    
+<header>
+  <p><a href="\">home</a> | <a href="http://amitkaps.com"> amitkaps.com </a></p>
+  <h1> Learn d3.js</h1>
+  <div class="flex-grid">
+    <div class="col">
+      <h3> DATA </h3>
+      <ul>
+          <li><a href="/?example=basic">Basic JS</a></li>
+          <li><a href="/?example=load">Load Data</a></li>
+          <li><a href="/?example=filter">Filter &amp; Sort </a></li>
+          <li><a href="/?example=summarize">Summarize</a></li>
+          <li><a href="/?example=groupby">Groupby</a></li>
+          <li><a href="/?example=multiple">Multiple Data</a></li>
+          <li><a href="/?example=combine">Combine Data</a></li>
+      </ul>
+    </div>
+    <div class="col">
+        <h3> VISUAL </h3>
+        <ul>
+            <li><a href="/?example=basic">Loading Data</a></li>
+            <li><a href="/?example=basic">Loading Data</a></li>
+            <li><a href="/?example=basic">Loading Data</a></li>
+            <li><a href="/?example=basic">Loading Data</a></li>
+            <li><a href="/?example=basic">Loading Data</a></li>     
+    </div>
+    <div class="col">
+      <h3> ANNOTATION </h3>
+      <ul>
+          <li><a href="/?example=basic">Loading Data</a></li>
+          <li><a href="/?example=basic">Loading Data</a></li>
+          <li><a href="/?example=basic">Loading Data</a></li>
+          <li><a href="/?example=basic">Loading Data</a></li>
+          <li><a href="/?example=basic">Loading Data</a></li> 
+    </div>
+    <div class="col">
+        <h3> INTERACTION </h3>
+        <ul>
+            <li><a href="/?example=basic">Loading Data</a></li>
+            <li><a href="/?example=basic">Loading Data</a></li>
+            <li><a href="/?example=basic">Loading Data</a></li>
+            <li><a href="/?example=basic">Loading Data</a></li>
+            <li><a href="/?example=basic">Loading Data</a></li>
+    </div>
+    </div>
+</header>
+
+<main>
+      <iframe sandbox="allow-popups allow-scripts allow-forms allow-same-origin" 
+          src="/example/basic.html" id="frame"
+          marginwidth="0" marginheight="0" fram  style="height:500px;width:960px;" scrolling="no"></iframe>
+      <h2 id="name"></h2>
+      <div class="raw">
+        <pre><code id="fileNode">
+        </code></pre>
+      </div>  
+</main>
+
+<script>
+  let urlParams = new URLSearchParams(window.location.search);
+  let example = urlParams.get('example')
+  let htmlfile = example == null ? "/example/basic.html" : "/example/"+example+".html"
+
+  const iframeNode = document.querySelector('#frame');
+  iframeNode.src = htmlfile;
+
+  const nameNode = document.querySelector("#name");
+  nameNode.innerHTML = '<a href="' + htmlfile + '">' + example + '.html</a>';
+  const fileNode = document.querySelector("#fileNode");
+  fileNode.innerHTML = htmlfile + ".html"
+
+  d3.text(htmlfile, function(error, content) {
+    if (error) content = "Loading error.";
+    fileNode.textContent = content;
+    hljs.highlightBlock(fileNode);
+  });
+
+</script>
