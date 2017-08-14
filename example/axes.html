@@ -7,22 +7,23 @@ body{margin: 10px;}
 .bar:hover {fill: grey;}
 </style>
 
-<h1> Scales </h1>
+<h1> Axes </h1>
 <div id="description"></div>
 <div id="vis"></div>
 
 <script>
 
 // Width, height and margin
+var w = 800, h = 400
 var margin = {top: 20, right: 10, bottom: 20, left: 50};
-var width = 800 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+var width = w - margin.left - margin.right,
+    height = h - margin.top - margin.bottom;
 
 // Create SVG element
 var svg = d3.select("#vis")
             .append("svg")
-            .attr("width", width)
-            .attr("height", height);
+            .attr("width", w)
+            .attr("height", h);
 
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -48,18 +49,30 @@ d3.csv("../data/airports.csv", function(error, data) {
   indData = data.filter(function(d) { return d.country == "India"; })
         .sort( function(a,b) { return b.altitude - a.altitude; })
         .slice(0,15);
+  console.log(indData);
 
-  x.domain(indData.map(function(d) { return d.city; }));
+  x.domain(indData.map(function(d) { return d.iata; }));
   y.domain([0, d3.max(indData, function(d) { return d.altitude; })]);
 
   g.selectAll(".bar")
     .data(indData)
   .enter().append("rect")
     .attr("class", "bar")
-    .attr("x", function(d) { return x(d.city); })
+    .attr("x", function(d) { return x(d.iata); })
     .attr("y", function(d) { return y(d.altitude); })
     .attr("width", x.bandwidth())
     .attr("height", function(d) { return height - y(d.altitude); });
+
+  // Add axes to the vis
+  g.append("g")
+      .attr("class", "axis-x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  g.append("g")
+      .attr("class", "axis-y")
+      .call(d3.axisLeft(y).ticks(10))
+
 });
 
 </script>

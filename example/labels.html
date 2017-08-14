@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../lib/d3.v4.min.js"></script>
+<style> 
+body{margin: 10px;}
+.bar {fill: brown;}
+.bar:hover {fill: grey;}
+.label-alt, .label-city {
+  text-anchor: middle; 
+  fill: whitesmoke;
+  font-size: 13px;
+}
+</style>
+
+<h1> Labels </h1>
+<div id="description"></div>
+<div id="vis"></div>
+
+<script>
+
+// Width, height and margin
+var w = 800, h = 400
+var margin = {top: 20, right: 10, bottom: 40, left: 50};
+var width = w - margin.left - margin.right,
+    height = h - margin.top - margin.bottom;
+
+// Create SVG element
+var svg = d3.select("#vis")
+            .append("svg")
+            .attr("width", w)
+            .attr("height", h);
+
+var g = svg.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Create x and y scales
+x = d3.scaleBand()
+              .rangeRound([0, width])
+              .padding(0.1);
+
+y = d3.scaleLinear()
+              .rangeRound([height, 0])
+
+
+d3.csv("../data/airports.csv", function(error, data) {
+  if (error) console.log("error loading", error); 
+
+  // Converting altitude string to numbers
+  data.forEach(function(d) {
+    d.altitude = +d.altitude;
+  });
+
+  // Lets vis the data for top 15 india city by altitude
+  indData = data.filter(function(d) { return d.country == "India"; })
+        .sort( function(a,b) { return b.altitude - a.altitude; })
+        .slice(0,15);
+  console.log(indData);
+
+  x.domain(indData.map(function(d) { return d.id; }));
+  y.domain([0, d3.max(indData, function(d) { return d.altitude; })]);
+
+  g.selectAll(".bar")
+    .data(indData)
+  .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", function(d) { return x(d.id); })
+    .attr("y", function(d) { return y(d.altitude); })
+    .attr("width", x.bandwidth())
+    .attr("height", function(d) { return height - y(d.altitude); });
+
+  // Add axes to the vis
+  g.append("g")
+      .attr("class", "axis-x")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  g.append("g")
+      .attr("class", "axis-y")
+      .call(d3.axisLeft(y).ticks(10))
+
+  // Add labels in the middle of the bars - alt
+  g.selectAll(".label-alt")
+    .data(indData)
+    .enter().append("text")
+      .attr("class", "label-alt")
+      .text(function(d) {return d.altitude;})
+      .attr("x", function(d) {
+         return x(d.id) + x.bandwidth()/2;
+       })
+      .attr("y", function(d) {
+            return y(d.altitude) + 20;
+      });
+
+  // Add labels in the middle of the bars - iata
+  g.selectAll(".label-city")
+    .data(indData)
+    .enter().append("text")
+      .attr("class", "label-city")
+      .text(function(d) {return d.iata;})
+      .attr("x", function(d) {
+         return x(d.id) + x.bandwidth()/2;
+       })
+      .attr("y", function(d) {
+            return height - 5;
+      });
+});
+
+</script>
