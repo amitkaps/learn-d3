@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../lib/d3.v4.min.js"></script>
+<style> body{margin: 10px;}</style>
+
+<h1> Draw SVG </h1>
+<p> Basic select SVG element and bind data </p>
+<div id="description"></div>
+<div id="vis"></div>
+
+<script>
+var dataset = [5, 25, 15, 20, 10];
+
+// Width, height and padding
+var width = 250,
+    height = 200,
+    barPadding = 1;
+
+// Create SVG element
+var svg = d3.select("body")
+						.append("svg")
+						.attr("width", width)
+						.attr("height", height);
+
+var vis = d3.select("#vis");
+
+var bar = svg.selectAll("rect")
+    .data(dataset);
+
+bar.enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", function(d, i) {
+        return i * (width / dataset.length);
+    })
+    .attr("y", function(d) {
+        return height - (d * 8);
+    })
+    .attr("width", width / dataset.length - barPadding)
+    .attr("height", function(d) {
+        return d * 8;
+    })
+    .attr("fill", "brown");
+</script>

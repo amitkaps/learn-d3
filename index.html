@@ -18,41 +18,40 @@
     <div class="col">
       <h3> DATA </h3>
       <ul>
-          <li><a href="?example=basic">Basic JS</a></li>
-          <li><a href="?example=load">Load Data</a></li>
-          <li><a href="?example=filter">Filter &amp; Sort </a></li>
-          <li><a href="?example=summarize">Summarize</a></li>
-          <li><a href="?example=groupby">Groupby</a></li>
-          <li><a href="?example=multiple">Multiple Data</a></li>
-          <li><a href="?example=combine">Combine Data</a></li>
+          <li><a href="#basic">Basic JS</a></li>
+          <li><a href="#load">Load</a></li>
+          <li><a href="#filter">Filter &amp; Sort </a></li>
+          <li><a href="#summarize">Summarize</a></li>
+          <li><a href="#groupby">Groupby</a></li>
+          <li><a href="#combine">Combine</a></li>
       </ul>
     </div>
     <div class="col">
         <h3> VISUAL </h3>
         <ul>
-            <li><a href="?example=basic">Loading Data</a></li>
-            <li><a href="?example=basic">Loading Data</a></li>
-            <li><a href="?example=basic">Loading Data</a></li>
-            <li><a href="?example=basic">Loading Data</a></li>
-            <li><a href="?example=basic">Loading Data</a></li>     
+            <li><a href="#bind">Select &amp; Bind</a></li>
+            <li><a href="#svg">Draw SVGs</a></li>
+            <li><a href="#scales">Scales</a></li>
+            <li><a href="#">Loading Data</a></li>
+            <li><a href="#">Loading Data</a></li>     
     </div>
     <div class="col">
-      <h3> ANNOTATION </h3>
+      <h3>ANNOTATE</h3>
       <ul>
-          <li><a href="?example=basic">Loading Data</a></li>
-          <li><a href="?example=basic">Loading Data</a></li>
-          <li><a href="?example=basic">Loading Data</a></li>
-          <li><a href="?example=basic">Loading Data</a></li>
-          <li><a href="?example=basic">Loading Data</a></li> 
+          <li><a href="#labels">Labels</a></li>
+          <li><a href="#axes">Axes</a></li>
+          <li><a href="#legends">Legends</a></li>
+          <li><a href="#">Annotate</a></li>
+          <li><a href="#">Loading Data</a></li> 
     </div>
     <div class="col">
-        <h3> INTERACTION </h3>
+        <h3>INTERACT</h3>
         <ul>
-            <li><a href="?example=basic">Loading Data</a></li>
-            <li><a href="?example=basic">Loading Data</a></li>
-            <li><a href="?example=basic">Loading Data</a></li>
-            <li><a href="?example=basic">Loading Data</a></li>
-            <li><a href="?example=basic">Loading Data</a></li>
+            <li><a href="#">Loading Data</a></li>
+            <li><a href="#">Loading Data</a></li>
+            <li><a href="#">Loading Data</a></li>
+            <li><a href="#">Loading Data</a></li>
+            <li><a href="#">Loading Data</a></li>
     </div>
     </div>
 </header>
@@ -69,22 +68,29 @@
 </main>
 
 <script>
-  let urlParams = new URLSearchParams(window.location.search);
-  let example = urlParams.get('example')
-  let htmlfile = example == null ? "example/basic.html" : "example/"+example+".html"
 
-  const iframeNode = document.querySelector('#frame');
-  iframeNode.src = htmlfile;
+  const getExample = function () {
+    let hash = window.location.hash
+    let file = hash.replace("#", "");
+    let fileName = file == "" ? "basic.html" : file + ".html";
+    let fileUrl = "example/" + fileName;
 
-  const nameNode = document.querySelector("#name");
-  nameNode.innerHTML = '<a href="' + htmlfile + '">' + example + '.html</a>';
-  const fileNode = document.querySelector("#fileNode");
-  fileNode.innerHTML = htmlfile + ".html"
+    const iframeNode = document.querySelector('#frame');
+    iframeNode.src = fileUrl;
 
-  d3.text(htmlfile, function(error, content) {
-    if (error) content = "Loading error.";
-    fileNode.textContent = content;
-    hljs.highlightBlock(fileNode);
-  });
+    const nameNode = document.querySelector("#name");
+    nameNode.innerHTML = '<a href="' + fileUrl + '">' + fileName + '</a>';
+    const fileNode = document.querySelector("#fileNode");
+    // fileNode.innerHTML = htmlfile + ".html"
+
+    d3.text(fileUrl, function(error, content) {
+      if (error) content = "Loading error...";
+      fileNode.textContent = content;
+      hljs.highlightBlock(fileNode);
+    });
+  }
+
+  window.onhashchange = function () {getExample();}
+  getExample();
 
 </script>

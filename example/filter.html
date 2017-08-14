@@ -5,10 +5,10 @@
 
 <h1> Filter &amp; Sort Data </h1>
 <p> Lets learn how to do Filter, Map &amp; Sort </p>
-<div id="detail"></div>
+<div id="description"></div>
 
 <script>
-var div = d3.select("#detail");
+var div = d3.select("#description");
 
 d3.csv("../data/airports.csv", function(error, data) {
   if (error) console.log("error loading", error); 
@@ -43,12 +43,12 @@ d3.csv("../data/airports.csv", function(error, data) {
   
   // Chaining operators
   var highAirports = data.filter(function(d) { return d.country == "India"; })
-      .sort( function(a,b) { return a.altitude - b.altitude; })
-      .filter(function (d) { return d.altitude > 2500})
-      .map(function(d) { return d.city});
+      .sort( function(a,b) { return b.altitude - a.altitude; })
+      .map(function(d) { return d.city})
+      .slice(0,10);
 
-  div.append("p")
-       .text("High Altitude Indian Airports: " + JSON.stringify(highAirports));
+  div.append("pre")
+      .text("High Altitude Indian Airports \n\n" + JSON.stringify(highAirports, null, 2));
   
 });
 </script>

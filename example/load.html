@@ -4,10 +4,10 @@
 <style> body{margin: 10px;}</style>
 
 <h1> Load Data </h1>
-<div id="detail"></div>
+<div id="description"></div>
 
 <script>
-var div = d3.select("#detail");
+var div = d3.select("#description");
 
 div.append('p')
      .text("We will be using the international airport data from Openflight.org")
@@ -16,8 +16,8 @@ div.append('a')
      .attr("href", "https://openflights.org/data.html")
      .text("Openflights.org/data.html")
 
-div.append("p")
-     .text("See the first row of the loaded airport data");
+div.append("pre")
+     .text("First row of the airport data");
 
 d3.csv("../data/airports.csv", function(error, data) {
   if (error) console.log("error loading", error); 
@@ -31,8 +31,8 @@ d3.csv("../data/airports.csv", function(error, data) {
     d.timezone = +d.timezone;
   });
   
-  div.append("p")
-       .text(JSON.stringify(data[0]));
+  div.append("pre")
+       .text(JSON.stringify(data[0], null, 2));
   console.log(data[0]);
   
 });

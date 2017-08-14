@@ -5,10 +5,10 @@
 
 <h1> Summarize Data </h1>
 <p> Basic summary operations like min, max, extent, mean </p>
-<div id="detail"></div>
+<div id="description"></div>
 
 <script>
-var div = d3.select("#detail");
+var div = d3.select("#description");
 
 d3.csv("../data/airports.csv", function(error, data) {
   if (error) console.log("error loading", error); 
@@ -22,19 +22,18 @@ d3.csv("../data/airports.csv", function(error, data) {
     d.timezone = +d.timezone;
   });
   
-  // Filter Indian Cities
+  // Calculate stats for Indian Cities
   var indianCities = data.filter(function(d) { return d.country == "India"; })
   
-  var minAlt = d3.min(indianCities, function(d){ return d.altitude} ) 
-  var maxAlt = d3.max(indianCities, function(d){ return d.altitude} ) 
-  var extentAlt = d3.extent(indianCities, function(d){ return d.altitude} ) 
-  var meanAlt = d3.mean(indianCities, function(d){ return d.altitude} ) 
+  var indianStats = {
+    "minAlt": d3.min(indianCities, function(d){ return d.altitude} ),
+    "maxAlt": d3.max(indianCities, function(d){ return d.altitude} ),
+    "extentAlt": d3.extent(indianCities, function(d){ return d.altitude} ),
+    "meanAlt": d3.mean(indianCities, function(d){ return d.altitude} ) 
+  }
   
-  div.append("p").text("Altitude of Indian Airports (feets)");
-  div.append("p").text("Minimum: " + minAlt);
-  div.append("p").text("Maximum: " + maxAlt);
-  div.append("p").text("Extent: " + extentAlt);
-  div.append("p").text("Mean: " + meanAlt);
+  div.append("pre").text("Indian airports altitude stats (in feets)");
+  div.append("pre").text(JSON.stringify(indianStats, null, 2));
   
 });
 </script>
