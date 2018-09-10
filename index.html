@@ -2,13 +2,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="description" content="{{ site.description }}">
-<meta name="author" content="{{ site.author }}">
+<meta name="description" content="Learning D3.js">
+<meta name="author" content="Amit Kapoor">
 
 <title>Learn D3.js</title>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="lib/github.css">
-<script src="lib/d3.v4.min.js"></script>
 <script src="lib/highlight.pack.js"></script>
     
 <header>
@@ -23,7 +22,6 @@
           <li><a href="#filter">Filter &amp; Sort </a></li>
           <li><a href="#summarize">Summarize</a></li>
           <li><a href="#groupby">Groupby</a></li>
-          <li><a href="#combine">Combine</a></li>
       </ul>
     </div>
     <div class="col">
@@ -81,11 +79,21 @@
     const fileNode = document.querySelector("#fileNode");
     // fileNode.innerHTML = htmlfile + ".html"
 
-    d3.text(fileUrl, function(error, content) {
-      if (error) content = "Loading error...";
-      fileNode.textContent = content;
-      hljs.highlightBlock(fileNode);
-    });
+    async function getTxt() {
+      try {
+        let response = await fetch(fileUrl);
+        let content = await response.text();
+        fileNode.textContent = content;
+        hljs.highlightBlock(fileNode);
+      }
+      catch(error) {
+        console.log('Loading error...', error);
+        fileNode.textContent = 'Loading error...';
+      }
+    }
+
+    getTxt();
+
   }
 
   window.onhashchange = function () {getExample();}

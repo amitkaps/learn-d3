@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<script src="../lib/d3.v4.min.js"></script>
+<script src="../lib/d3.v5.min.js"></script>
 <style> body{margin: 10px;}</style>
 
 <h1> Summarize Data </h1>
@@ -8,32 +8,39 @@
 <div id="description"></div>
 
 <script>
-var div = d3.select("#description");
+const div = d3.select("#description");
 
-d3.csv("../data/airports.csv", function(error, data) {
-  if (error) console.log("error loading", error); 
+async function vis(){
 
-  // Converting string to numbers
-  data.forEach(function(d) {
-    d.id = +d.id;
-    d.latitude = +d.latitude;
-    d.longitude = +d.longitude;
-    d.altitude = +d.altitude;
-    d.timezone = +d.timezone;
-  });
-  
+  const data = await d3.csv("../data/airports.csv", parse)
+
+  function parse (d) {
+    return {    
+      id: +d["id"],
+      name: +d["name"],
+      city: d["city"],
+      country: d["country"],
+      iata: d["iata"],
+      latitude: +d["latitude"],
+      longitude: +d["longitude"],
+      altitude: +d["altitude"]
+    }
+  }
   // Calculate stats for Indian Cities
-  var indianCities = data.filter(function(d) { return d.country == "India"; })
+  const indianCities = data.filter( d => d.country == "India")
   
-  var indianStats = {
-    "minAlt": d3.min(indianCities, function(d){ return d.altitude} ),
-    "maxAlt": d3.max(indianCities, function(d){ return d.altitude} ),
-    "extentAlt": d3.extent(indianCities, function(d){ return d.altitude} ),
-    "meanAlt": d3.mean(indianCities, function(d){ return d.altitude} ) 
+  const indianStats = {
+    "minAlt": d3.min(indianCities, d => d.altitude ),
+    "maxAlt": d3.max(indianCities, d => d.altitude ),
+    "extentAlt": d3.extent(indianCities, d => d.altitude ),
+    "meanAlt": d3.mean(indianCities, d => d.altitude ) 
   }
   
   div.append("pre").text("Indian airports altitude stats (in feets)");
   div.append("pre").text(JSON.stringify(indianStats, null, 2));
   
-});
+}
+
+vis();
+
 </script>

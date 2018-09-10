@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../lib/d3.v4.min.js"></script>
+<style> 
+body{margin: 10px;}
+#description {margin: 20px 0}
+.is-checked {background-color: blue; color: white;}
+.bar {fill: brown;}
+.bar:hover {fill: grey;}
+</style>
+
+<h1> Transition </h1>
+<div id="description">
+    <button data-filter="0" class="is-checked">Show >0</button>
+    <button data-filter="10">Show > 10</button>    
+    <button data-filter="20">Show > 20</button>
+  </div>
+<div id="vis"></div>
+
+<script>
+var dataset = [5, 25, 15, 20, 10];
+
+// Width, height and padding
+var width = 250,
+    height = 200,
+    barPadding = 1;
+
+// Create SVG element
+var svg = d3.select("#vis")
+						.append("svg")
+						.attr("width", width)
+						.attr("height", height);
+
+function update(data) {
+  // DATA JOIN
+  // Join new data with old elements, if any.
+  var bar = svg.selectAll("rect")
+      .data(dataset);
+
+bar.enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", function(d, i) {
+        return i * (width / dataset.length);
+    })
+    .attr("y", function(d) {
+        return height - (d * 8);
+    })
+    .attr("width", width / dataset.length - barPadding)
+    .attr("height", function(d) {
+        return d * 8;
+    })
+    .attr("fill", "brown");
+
+}
+  
+buttons = d3.selectAll("button")
+
+buttons.on("click", function (){
+  console.log(this.dataset.filter)
+  value = this.dataset.filter;
+  filterData = dataset.filter(function (d) {return d > value});
+  console.log(filterData)
+  bar.data(filterData)
+     .update;
+
+  // Update the button is-checked
+  buttons.attr("class", "");
+  this.classList.add('is-checked');
+
+})
+
+</script>

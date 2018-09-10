@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<script src="../lib/d3.v4.min.js"></script>
+<script src="../lib/d3.v5.min.js"></script>
 <style> body{margin: 10px;}</style>
 
 <h1> Load Data </h1>
@@ -19,24 +19,32 @@ div.append('a')
 div.append("pre")
      .text("First row of the airport data");
 
-d3.csv("../data/airports.csv", function(error, data) {
-  if (error) console.log("error loading", error); 
 
-  // Converting string to numbers
-  data.forEach(function(d) {
-    d.id = +d.id;
-    d.latitude = +d.latitude;
-    d.longitude = +d.longitude;
-    d.altitude = +d.altitude;
-    d.timezone = +d.timezone;
-  });
-  
+async function vis(){
+
+  const data = await d3.csv("../data/airports.csv", parse)
+
+  function parse (d) {
+    return {    
+      id: +d["id"],
+      name: +d["name"],
+      city: d["city"],
+      country: d["country"],
+      iata: d["iata"],
+      latitude: +d["latitude"],
+      longitude: +d["longitude"],
+      altitude: +d["altitude"]
+    }
+  }
+
   div.append("pre")
        .text(JSON.stringify(data[0], null, 2));
   console.log(data[0]);
-  
-});
+}
+
+vis();
 
 // This does not work - data is not in scope
-console.log("airports data is ", data[0])
+// console.log("airports data is ", data[0])
+
 </script>

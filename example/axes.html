@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<script src="../lib/d3.v4.min.js"></script>
+<script src="../lib/d3.v5.min.js"></script>
+
 <style> 
-body{margin: 10px;}
-.bar {fill: brown;}
-.bar:hover {fill: grey;}
+ body{margin: 10px;}
+ .bar {fill: brown;}
+ .bar:hover {fill: grey;}
 </style>
 
 <h1> Axes </h1>
@@ -12,56 +13,59 @@ body{margin: 10px;}
 <div id="vis"></div>
 
 <script>
-
 // Width, height and margin
-var w = 800, h = 400
-var margin = {top: 20, right: 10, bottom: 20, left: 50};
-var width = w - margin.left - margin.right,
+const w = 700, h = 400
+const margin = {top: 20, right: 10, bottom: 20, left: 50};
+const width = w - margin.left - margin.right,
     height = h - margin.top - margin.bottom;
 
 // Create SVG element
-var svg = d3.select("#vis")
+let svg = d3.select("#vis")
             .append("svg")
             .attr("width", w)
             .attr("height", h);
 
-var g = svg.append("g")
+let g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 // Create x and y scales
-x = d3.scaleBand()
+let x = d3.scaleBand()
               .rangeRound([0, width])
               .padding(0.1);
 
-y = d3.scaleLinear()
+let y = d3.scaleLinear()
               .rangeRound([height, 0])
 
 
-d3.csv("../data/airports.csv", function(error, data) {
-  if (error) console.log("error loading", error); 
+async function vis(){
 
-  // Converting altitude string to numbers
-  data.forEach(function(d) {
-    d.altitude = +d.altitude;
-  });
+  const data = await d3.csv("../data/airports.csv", parse)
+
+  function parse (d) {
+    return {
+      city: d["city"],
+      iata: d["iata"],
+      country: d["country"],
+      altitude: +d["altitude"]
+    }
+  }
 
   // Lets vis the data for top 15 india city by altitude
-  indData = data.filter(function(d) { return d.country == "India"; })
-        .sort( function(a,b) { return b.altitude - a.altitude; })
+  const indData = data.filter( d => d.country == "India")
+        .sort( (a,b) => b.altitude - a.altitude )
         .slice(0,15);
-  console.log(indData);
 
-  x.domain(indData.map(function(d) { return d.iata; }));
-  y.domain([0, d3.max(indData, function(d) { return d.altitude; })]);
+  x.domain(indData.map( d => d.iata ));
+  y.domain([0, d3.max(indData, d => d.altitude)]);
 
   g.selectAll(".bar")
     .data(indData)
   .enter().append("rect")
     .attr("class", "bar")
-    .attr("x", function(d) { return x(d.iata); })
-    .attr("y", function(d) { return y(d.altitude); })
+    .attr("x", d => x(d.iata) )
+    .attr("y", d => y(d.altitude))
     .attr("width", x.bandwidth())
-    .attr("height", function(d) { return height - y(d.altitude); });
+    .attr("height", d => height - y(d.altitude) );
 
   // Add axes to the vis
   g.append("g")
@@ -73,6 +77,7 @@ d3.csv("../data/airports.csv", function(error, data) {
       .attr("class", "axis-y")
       .call(d3.axisLeft(y).ticks(10))
 
-});
+}
+vis();
 
 </script>

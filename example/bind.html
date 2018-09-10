@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<script src="../lib/d3.v4.min.js"></script>
+<script src="../lib/d3.v5.min.js"></script>
 <style> body{margin: 10px;}</style>
 
 <h1> Select &amp; Bind </h1>
@@ -9,25 +9,25 @@
 <div id="vis"></div>
 
 <script>
-var dataset = [5, 25, 15, 20, 10];
+const data = [5, 25, 15, 20, 10];
 
 d3.select("#description")  
   .selectAll('pre')
-    .data(dataset)
+    .data(data)
   .enter()
     .append('pre')
-    .text(function(d){ return d });
+    .text(d => d);
 
 // Better way to write (for future data-binding)
-var vis = d3.select("#vis");
+let vis = d3.select("#vis");
 
-var bar = vis.selectAll("div")
-    .data(dataset);
+let bar = vis.selectAll("div")
+    .data(data);
 
 bar.enter().append("div")
   .style("height", 25 + "px")
   .style("margin", 2 + "px")
   .style("background-color", "brown")
-  .style("width", function(d) { return d * 10 + "px"; });
+  .style("width", d => d * 10 + "px");
 
 </script>

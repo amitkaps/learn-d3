@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<script src="../lib/d3.v4.min.js"></script>
+<script src="../lib/d3.v5.min.js"></script>
 <style> body{margin: 10px;}</style>
 
 <h1> GroupBy Data </h1>
@@ -8,49 +8,58 @@
 <div id="description"></div>
 
 <script>
-var div = d3.select("#description");
+const div = d3.select("#description");
 
-d3.csv("../data/airports.csv", function(error, data) {
-  if (error) console.log("error loading", error); 
+async function vis(){
 
-  // Converting string to numbers
-  data.forEach(function(d) {
-    d.id = +d.id;
-    d.latitude = +d.latitude;
-    d.longitude = +d.longitude;
-    d.altitude = +d.altitude;
-    d.timezone = +d.timezone;
-  });
-  
+  const data = await d3.csv("../data/airports.csv", parse)
+
+  function parse (d) {
+    return {    
+      id: +d["id"],
+      name: +d["name"],
+      city: d["city"],
+      country: d["country"],
+      iata: d["iata"],
+      latitude: +d["latitude"],
+      longitude: +d["longitude"],
+      altitude: +d["altitude"]
+    }
+  }
+
   // Lets groupby the airports by country
-  var airportByCountry = d3.nest()
-     .key(function (d) { return d.country})
+  const airportByCountry = d3.nest()
+     .key(d => d.country)
      .entries(data);
 
   console.log(airportByCountry[0]);
 
   // Lets find the number of airport in each country
-  var numAirportByCountry = d3.nest()
-     .key(function (d) { return d.country})
-     .rollup(function (v) { return v.length })
+  const numAirportByCountry = d3.nest()
+     .key( d => d.country )
+     .rollup( v => v.length )
      .entries(data);
 
-  console.log(numAirportByCountry);
+  console.log(numAirportByCountry.slice(0,10));
   
-  var top5 = numAirportByCountry
-      .sort( function(a,b) { return b.value - a.value; })
+  const top5 = numAirportByCountry
+      .sort( (a,b) =>  b.value - a.value )
       .slice(0, 5);
 
   div.append("pre").text("Top five countries by number of airport");
   div.append("pre").text(JSON.stringify(top5, null, 2));
 
   // Multiple rollup - No. of airport and Max Altitude
-  var numAltAirportByCountry = d3.nest()
-     .key(function (d) { return d.country})
-     .rollup(function(v) { return {
+  const numAltAirportByCountry = d3.nest()
+     .key( d => d.country )
+     .rollup( v => ({
         count: v.length,
-        avg: d3.mean(v, function(d) { return d.altitude; })
-      }; })
+        avg: d3.mean(v, d => d.altitude)
+      }))
      .entries(data);
-});
+
+}
+
+vis();
+
 </script>

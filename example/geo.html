@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../lib/d3.v4.min.js"></script>
+<style> body{margin: 10px;}</style>
+
+<h1> Geo Projection </h1>
+<div id="description"></div>
+<div id="vis"></div>
+
+<script>
+
+// Width, height and padding
+var width = 900,
+    height = 350
+
+// Create SVG element
+var svg = d3.select("body")
+						.append("svg")
+						.attr("width", width)
+						.attr("height", height);
+
+var projection = d3.geoMercator()
+  .scale(width / 2 / Math.PI)
+  .translate([width / 2, height / 2])
+
+var path = d3.geoPath()
+  .projection(projection);
+
+var url = "http://enjalot.github.io/wwsd/data/world/world-110m.geojson";
+d3.json(url, function(err, geojson) {
+  svg.append("path")
+    .attr("d", path(geojson))
+})
+</script>
